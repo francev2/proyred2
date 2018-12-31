@@ -17,6 +17,26 @@ public class Paquete implements Serializable {
     private Tipo tipo;
     private boolean error; 
 
+    public Paquete() {
+    }
+    
+    
+
+    public Paquete(String username, Tipo tipo, boolean error) {
+        this.username = username;
+        this.tipo = tipo;
+        this.error = error;
+    }
+
+    public Paquete(String username, Tipo tipo, boolean error, String mensaje) {
+        this.username = username;
+        this.mensaje = mensaje;
+        this.tipo = tipo;
+        this.error = error;
+    }
+    
+    
+
     public boolean isError() {
         return error;
     }

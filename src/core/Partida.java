@@ -12,15 +12,64 @@ import java.util.ArrayList;
  * @author Francisco
  */
 public class Partida {
-    String nombre;
-    Tablero tablero;
-    ArrayList<Jugador> jugadores = new ArrayList<Jugador>();
-    String[] colores;
+    private String[] colores;
+    private String nombre;
+    private Tablero tablero;
+    private ArrayList<Jugador> jugadores = new ArrayList<Jugador>();
+    private String turno;
+    private boolean inicioDePartida;
+    private boolean partidaIniciada;
+    private boolean partidaPausada;
+//    Representa el valor de los dados para saber que jugador empieza
+    private String[][] inicio = new String[4][2];
+
+    public String[][] getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(String[][] inicio) {
+        this.inicio = inicio;
+    }
+
+    
+    public boolean isPartidaIniciada() {
+        return partidaIniciada;
+    }
+
+    public void setPartidaIniciada(boolean partidaIniciada) {
+        this.partidaIniciada = partidaIniciada;
+    }
+
+    public boolean isInicioDePartida() {
+        return inicioDePartida;
+    }
+
+    public void setInicioDePartida(boolean inicioDePartida) {
+        this.inicioDePartida = inicioDePartida;
+    }
 
     public Partida(String nombre){
         this.colores = new String[]{"azul", "rojo", "verde", "amarillo"};
         this.nombre = nombre;
     }
+
+    public boolean isPartidaPausada() {
+        return partidaPausada;
+    }
+
+    public void setPartidaPausada(boolean partidaPausada) {
+        this.partidaPausada = partidaPausada;
+    }
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
+    
+    
     
     public String getNombre() {
         return nombre;
