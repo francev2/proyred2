@@ -10,5 +10,5 @@ package conexion;
  * @author Francisco
  */
 public enum Tipo {
-    LOGIN
+    LOGIN, TURNO, MOVIMIENTO, GANADOR, INICIODEPARTIDA, PAUSARPARTIDA, REINICIARPARTIDA, DADO
 }

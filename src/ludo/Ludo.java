@@ -21,8 +21,11 @@ public class Ludo {
        //Cliente cliente = new Cliente("192.168.1.4");
        System.out.println("'continuará ...'");
        
-       Inicio i = new Inicio();
-       i.setVisible(true);
+//       Inicio i = new Inicio();
+//       i.setVisible(true);
+
+        Pantalla p = new Pantalla();
+        p.setVisible(true);
     }
     
 }

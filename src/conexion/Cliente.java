@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ludo.Pantalla;
 
 /**
  *
@@ -26,6 +27,10 @@ public class Cliente {
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
     String username;
+    boolean turno;
+    private Pantalla pantalla;
+    private boolean inicioDePartida;
+    
 
     public Cliente(String ipServer, int ipPort) throws IOException {
         this.ipServer = ipServer;
@@ -84,14 +89,53 @@ public class Cliente {
             }
             
             return m.getMensaje();  
-        } 
-        else{
+        } if (m.getTipo() == Tipo.TURNO || m.getTipo() == Tipo.INICIODEPARTIDA){
+            if (m.getUsername().equalsIgnoreCase(this.username)){
+                turno = true;
+                pantalla.habilitarDadoButton(turno);
+                pantalla.mostrarMensaje("Es tu turno");
+                return ("Es tu turno");
+            }else{
+                turno = false;
+                pantalla.habilitarDadoButton(turno);
+                pantalla.mostrarMensaje("Es el turno de "+m.getUsername());
+                return ("Es el turno de "+m.getUsername());
+            }
+//        } if () {
+//            if (m.getUsername().equalsIgnoreCase(this.username)){   
+//                turno = true;
+//                pantalla.mostrarMensaje("Es tu turno");
+//                return "Es tu turno";
+//            }else{
+//                turno = false;
+//                return "El turno es de "+ m.getUsername();
+//            }
+        } if (m.getTipo() == Tipo.PAUSARPARTIDA) {
+            turno = false;
+            pantalla.mostrarMensaje("Partida pausada");
+            return "Partida pausada";
+        
+        } if ( m.getTipo() == Tipo.MOVIMIENTO ) {
+            if (m.isError()){
+                pantalla.mostrarMensaje(m.getMensaje());
+                return m.getMensaje();
+            }else{
+//                un jugador se movio
+                return "Se movió el jugador";
+            }
+        }else{
             return m.getMensaje();
         }
-        
-        
-                
-                
+                       
+    }
+    
+    private void lanzarDado(){
+        if (!turno){
+            pantalla.mostrarMensaje("No es tu turno");
+        }else{
+            int dado = (int)(1+Math.random()*6);
+            enviarMensaje(new Paquete(this.username, Tipo.DADO, false, ""+dado) );
+        }
     }
     
     private void cerrarConexion(){
@@ -102,6 +146,10 @@ public class Cliente {
         } catch (IOException ex) {
             Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void setPantalla(Pantalla p) {
+        this.pantalla = p;
     }
 
 
@@ -127,6 +175,10 @@ public class Cliente {
             }
         }
    }
+   
+   
+   
+   
     
     
 }
