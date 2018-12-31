@@ -15,8 +15,10 @@ public class Partida {
     String nombre;
     Tablero tablero;
     ArrayList<Jugador> jugadores = new ArrayList<Jugador>();
+    String[] colores;
 
     public Partida(String nombre){
+        this.colores = new String[]{"azul", "rojo", "verde", "amarillo"};
         this.nombre = nombre;
     }
     
@@ -47,7 +49,8 @@ public class Partida {
     
     public boolean addJuagador (String username, String pass, String nombre, String apellido ){
         if (jugadores.size() < 4){
-            Jugador jugador = new Jugador( username, pass, nombre, apellido);
+            //Jugador jugador = new Jugador( username, pass, nombre, apellido);
+            Jugador jugador = new Jugador( username, pass, nombre, apellido,colores[jugadores.size()]);
             jugadores.add(jugador);
             return true;
         }
