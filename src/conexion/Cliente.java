@@ -112,6 +112,7 @@ public class Cliente {
 //            }
         } if (m.getTipo() == Tipo.PAUSARPARTIDA) {
             turno = false;
+            pantalla.habilitarDadoButton(false);
             pantalla.mostrarMensaje("Partida pausada");
             return "Partida pausada";
         
@@ -129,12 +130,13 @@ public class Cliente {
                        
     }
     
-    private void lanzarDado(){
+    public void lanzarDado(){
         if (!turno){
             pantalla.mostrarMensaje("No es tu turno");
         }else{
             int dado = (int)(1+Math.random()*6);
-            enviarMensaje(new Paquete(this.username, Tipo.DADO, false, ""+dado) );
+            pantalla.mostrarDado(dado);
+//            enviarMensaje(new Paquete(this.username, Tipo.DADO, false, ""+dado) );
         }
     }
     

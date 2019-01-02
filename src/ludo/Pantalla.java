@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -29,12 +31,14 @@ public class Pantalla extends javax.swing.JFrame {
     /**
      * Creates new form Pantalla
      */
-    public Pantalla() {
+    public Pantalla(Cliente cliente) {
         initComponents();
-//        this.cliente = cliente;
-//        cliente.setPantalla(this);
+        this.cliente = cliente;
+        cliente.setPantalla(this);
 
+        dadoTextura.setVisible(false);
         this.setSize(1000, 700);
+        
         ImageIcon icon = new ImageIcon(getClass().getResource(IMG_PATH));
         Image image = icon.getImage();
         icon = new ImageIcon(image.getScaledInstance(tamañoTablero, tamañoTablero, Image.SCALE_DEFAULT));
@@ -53,6 +57,28 @@ public class Pantalla extends javax.swing.JFrame {
     public void mostrarMensaje(String mensaje){
         this.mensaje.setText(mensaje);
     }
+    
+    public void mostrarDado(int num){
+        ImageIcon icon = new ImageIcon(getClass().getResource(num+".png"));
+        Image image = icon.getImage();
+        icon = new ImageIcon(image.getScaledInstance(168, 168, Image.SCALE_DEFAULT));
+        dadoTextura  = new JLabel(icon);
+        dadoTextura.setVisible(true);
+        
+        new Thread( new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    dadoTextura.setVisible(false);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Pantalla.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
+        }).start();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,6 +93,7 @@ public class Pantalla extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         dadoButton = new javax.swing.JLabel();
         mensaje = new javax.swing.JLabel();
+        dadoTextura = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -97,20 +124,30 @@ public class Pantalla extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        dadoButton.setText("Lanzar");
+        dadoButton.setBackground(new java.awt.Color(102, 255, 255));
+        dadoButton.setFont(new java.awt.Font("Tahoma", 0, 22)); // NOI18N
+        dadoButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        dadoButton.setText("LANZAR");
+        dadoButton.setToolTipText("");
+        dadoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dadoButtonMouseClicked(evt);
+            }
+        });
 
+        mensaje.setBackground(new java.awt.Color(255, 255, 255));
         mensaje.setFont(new java.awt.Font("Nirmala UI", 1, 14)); // NOI18N
-        mensaje.setText("jLabel1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(mensaje, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                    .addComponent(dadoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mensaje, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(dadoButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dadoTextura, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -118,7 +155,9 @@ public class Pantalla extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(mensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 414, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
+                .addComponent(dadoTextura, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addComponent(dadoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(50, 50, 50))
         );
@@ -130,15 +169,15 @@ public class Pantalla extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(50, 50, 50)
                 .addComponent(panelTablero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51))
+                .addGap(50, 50, 50))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(50, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelTablero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(50, 50, 50))
@@ -151,9 +190,14 @@ public class Pantalla extends javax.swing.JFrame {
         System.out.println("X: " + evt.getX() + " -- Y: " + evt.getY());
     }//GEN-LAST:event_panelTableroMouseClicked
 
+    private void dadoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dadoButtonMouseClicked
+        cliente.lanzarDado();
+    }//GEN-LAST:event_dadoButtonMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel dadoButton;
+    private javax.swing.JLabel dadoTextura;
     private javax.swing.JPanel jPanel1;
     private java.awt.Label label1;
     private javax.swing.JLabel mensaje;

@@ -5,6 +5,8 @@
  */
 package core;
 
+import core.Fichas.Colores;
+import core.Fichas.*;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +21,7 @@ public class Partida {
     private boolean inicioDePartida;
     private boolean partidaIniciada;
     private boolean partidaPausada;
+    private Colores[] colores;
 //    Representa el valor de los dados para saber que jugador empieza
     private String[][] inicio = new String[4][2];
 
@@ -48,6 +51,7 @@ public class Partida {
     }
 
     public Partida(String nombre){
+        this.colores = new Colores[]{Colores.azul, Colores.rojo, Colores.verde, Colores.amarillo};
         this.nombre = nombre;
     }
 
@@ -96,7 +100,9 @@ public class Partida {
     
     public boolean addJuagador (String username, String pass, String nombre, String apellido ){
         if (jugadores.size() < 4){
-            Jugador jugador = new Jugador( username, pass, nombre, apellido);
+            //Jugador jugador = new Jugador( username, pass, nombre, apellido);
+            Ficha ficha;
+            Jugador jugador = new Jugador( username, pass, nombre, apellido,colores[jugadores.size()]);
             jugadores.add(jugador);
             return true;
         }

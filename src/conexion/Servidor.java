@@ -283,7 +283,7 @@ public class Servidor {
             for (int i=0; i < conexiones.size(); i ++ ){
                 System.out.println(conexiones.get(i).getUsername() + "3");
             }
-//        }else if (sol.getTipo() == Tipo.DADO){
+        }else if (sol.getTipo() == Tipo.DADO){
             
             if (getPartidaByUsername(sol.getUsername()).isInicioDePartida()){
                 if (getPartidaByUsername(sol.getUsername()).getInicio()[3][1] == null){
