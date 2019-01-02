@@ -13,11 +13,13 @@ public class Casilla {
     private int x;
     private int y;
     private boolean ocupada;
+    private TipoCasilla tipo;
     
-    public Casilla (int x, int y, boolean ocupada){
+    public Casilla (int x, int y, boolean ocupada,TipoCasilla tipo){
         this.x = x;
         this.y = y;
         this.ocupada = ocupada;
+        this.tipo = tipo;
     }
 
     public int getX() {

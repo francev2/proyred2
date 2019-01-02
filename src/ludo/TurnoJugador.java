@@ -5,6 +5,7 @@
  */
 package ludo;
 
+import core.Fichas.Colores;
 import core.Jugador;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -38,16 +39,8 @@ public class TurnoJugador extends javax.swing.JFrame {
         this.lanzarbutton.setEnabled(true);
         this.jugador = jugador;
         this.nombreLbael.setText(jugador.getUsername());
-        switch (jugador.getColor()){
-            case "azul":setButtonsIcons("fichaAzul.png");
-                        break;
-            case "rojo":setButtonsIcons("fichaRoja.png");
-                        break;
-            case "verde":setButtonsIcons("fichaVerde.png");
-                        break;
-            case "amarillo":setButtonsIcons("fichaAmarilla.png");
-                        break;
-            }
+        String url = this.jugador.getColor();
+        setButtonsIcons(url);
         setFichasEnabled();    
 
 }
@@ -106,6 +99,11 @@ public class TurnoJugador extends javax.swing.JFrame {
         resultadoLabel.setText("   ");
 
         terminarButton.setText("terminar turno");
+        terminarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                terminarButtonActionPerformed(evt);
+            }
+        });
 
         fichaButton1.setText("Ficha 1");
         fichaButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -204,12 +202,14 @@ public class TurnoJugador extends javax.swing.JFrame {
         this.resultadoLabel.setText(Integer.toString(dado));
         if (dado == 6){
             this.liberarFicha.setEnabled(true);
-            this.fichaButton1.setEnabled(true);
-            this.fichaButton2.setEnabled(true);
-            this.fichaButton3.setEnabled(true);
-            this.fichaButton4.setEnabled(true);
+            if (!this.jugador.getFichaInMeta(0)){this.fichaButton1.setEnabled(true);}
+            if (!this.jugador.getFichaInMeta(1)){this.fichaButton2.setEnabled(true);}
+            if (!this.jugador.getFichaInMeta(2)){this.fichaButton3.setEnabled(true);}
+            if (!this.jugador.getFichaInMeta(3)){this.fichaButton4.setEnabled(true);}
+        } else if (this.jugador.puedeMoverFicha()){
+            this.moverButton.setEnabled(true);
+            setFichasEnabled();
         }
-        this.moverButton.setEnabled(true);
         //this.lanzarbutton.setEnabled(false);
     }//GEN-LAST:event_lanzarbuttonActionPerformed
 
@@ -219,6 +219,7 @@ public class TurnoJugador extends javax.swing.JFrame {
         } else{
             this.liberarFicha.setEnabled(false);
             this.jugador.moverFicha(this.fichaSeleccionada, this.dado);
+            setFichasEnabled();
         }
     }//GEN-LAST:event_moverButtonActionPerformed
 
@@ -245,6 +246,10 @@ public class TurnoJugador extends javax.swing.JFrame {
         this.lanzarbutton.setEnabled(true);
         setFichasEnabled();
     }//GEN-LAST:event_liberarFichaActionPerformed
+
+    private void terminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terminarButtonActionPerformed
+        setFichasEnabled();
+    }//GEN-LAST:event_terminarButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -282,10 +287,34 @@ public class TurnoJugador extends javax.swing.JFrame {
     }
     
     private void setFichasEnabled(){
-        this.fichaButton1.setEnabled(!this.jugador.getFichaInHome(0));
-        this.fichaButton2.setEnabled(!this.jugador.getFichaInHome(1));
-        this.fichaButton3.setEnabled(!this.jugador.getFichaInHome(2));
-        this.fichaButton4.setEnabled(!this.jugador.getFichaInHome(3));
+        if (!this.jugador.getFichaInMeta(0)){
+            this.fichaButton1.setEnabled(!this.jugador.getFichaInHome(0));
+        }
+        else {
+            this.fichaButton1.setEnabled(false);
+        }
+        if (!this.jugador.getFichaInMeta(1)){this.fichaButton2.setEnabled(
+                !this.jugador.getFichaInHome(1));
+        }
+        else {
+            this.fichaButton2.setEnabled(false);
+        }
+        if (!this.jugador.getFichaInMeta(2)){
+            this.fichaButton3.setEnabled(!this.jugador.getFichaInHome(2));
+        }
+        else {
+            this.fichaButton3.setEnabled(false);
+        }
+        if (!this.jugador.getFichaInMeta(3)){
+            this.fichaButton4.setEnabled(!this.jugador.getFichaInHome(3));
+        }
+        else {
+            this.fichaButton4.setEnabled(false);
+        }
+        
+        
+        
+        
     }
     
     private void setButtonsIcons(String name){

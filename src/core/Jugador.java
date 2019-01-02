@@ -5,6 +5,9 @@
  */
 package core;
 
+import core.Fichas.Colores;
+import core.Fichas.Ficha;
+
 /**
  *
  * @author Francisco
@@ -16,8 +19,8 @@ public class Jugador {
     String pass;
     String nombre;
     String apellido;
-    String color;
     Ficha[] fichas = new Ficha[4];
+    Colores color;
     
     public Jugador(String username, String pass, String nombre, String apellido){
         this.username = username;
@@ -25,13 +28,12 @@ public class Jugador {
         this.apellido = apellido;
         this.nombre = nombre;
     }
-    public Jugador(String username, String pass, String nombre, String apellido,String color){
+    public Jugador(String username, String pass, String nombre, String apellido,Colores color){
         this.username = username;
         this.pass = pass;
         this.apellido = apellido;
         this.nombre = nombre;
-        this.color = color;
-        inicializarPiezas();
+        inicializarPiezas(color);
     }
     
     public Jugador(String username){
@@ -71,13 +73,11 @@ public class Jugador {
         this.pass = pass;
     }
 
-    public String getColor(){ return this.color;}
+    public String getColor(){ return this.fichas[0].getUrlIcon();}
     
-    public void setColor(String color){ this.color = color;}
-    
-    private void inicializarPiezas() {
+    private void inicializarPiezas(Colores color) {
         for (int i = 0 ;i < this.fichas.length ;i++){
-            this.fichas[i] = new Ficha(this.color);
+            this.fichas[i] = new Ficha(color);
         }
     }
     
@@ -86,11 +86,8 @@ public class Jugador {
     }
     
     
-    public int liberarFicha(int i){
+    public void liberarFicha(int i){
         this.fichas[i].setHome(false);
-        int dado = lanzarDado();
-        this.fichas[i].moverFicha(dado);
-        return this.fichas[i].getCasilla();
     }
     
     public int moverFicha(int i,int movimientos){
@@ -100,5 +97,17 @@ public class Jugador {
     
     public boolean getFichaInHome(int i){
         return this.fichas[i].getHome();
+    }
+    
+    public boolean puedeMoverFicha(){
+        boolean flag = false;
+        for (int i = 0; i < this.fichas.length; i++){
+            flag = flag || !(this.getFichaInHome(i));
+        }
+        return flag;
+    }
+    
+    public boolean getFichaInMeta(int i){
+        return this.fichas[i].getEstaEnMeta();
     }
 }
