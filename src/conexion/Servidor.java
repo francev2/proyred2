@@ -95,7 +95,7 @@ public class Servidor {
         for (int i = 0; i < partidas.size(); i ++)
             if (partidas.get(i).getNombre().equalsIgnoreCase(sala)){
                 partida = partidas.get(i);
-                for (int j = 0; i < partidas.get(i).getJugadores().size(); j++){
+                for (int j = 0; j < partidas.get(i).getJugadores().size(); j++){
                     if ( partidas.get(i).getJugadores().get(j).getUsername().equalsIgnoreCase(username) ){
                         user = true;
                         break;
@@ -253,10 +253,10 @@ public class Servidor {
                 }else{
                     
                     return partida.getJugadores().get(i+1).getUsername();
-                }
-                
+                }        
             }
         }
+        
         return null;
     }
 //    Devuelve el jugador que saco el mayor numero en la primera ronda para empezar la partida
@@ -283,7 +283,7 @@ public class Servidor {
             for (int i=0; i < conexiones.size(); i ++ ){
                 System.out.println(conexiones.get(i).getUsername() + "3");
             }
-        }else if (sol.getTipo() == Tipo.DADO){
+//        }else if (sol.getTipo() == Tipo.DADO){
             
             if (getPartidaByUsername(sol.getUsername()).isInicioDePartida()){
                 if (getPartidaByUsername(sol.getUsername()).getInicio()[3][1] == null){
