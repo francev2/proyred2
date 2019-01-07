@@ -51,8 +51,9 @@ public class Partida {
     }
 
     public Partida(String nombre){
-        this.colores = new Colores[]{Colores.azul, Colores.rojo, Colores.verde, Colores.amarillo};
+        this.colores = new Colores[]{Colores.amarillo, Colores.verde, Colores.azul, Colores.rojo,  };
         this.nombre = nombre;
+        this.tablero = new Tablero();
     }
 
     public boolean isPartidaPausada() {
@@ -99,15 +100,82 @@ public class Partida {
     
     
     public boolean addJuagador (String username, String pass, String nombre, String apellido ){
+        System.out.println("jugador num: => " + jugadores.size());
         if (jugadores.size() < 4){
             //Jugador jugador = new Jugador( username, pass, nombre, apellido);
             Ficha ficha;
-            Jugador jugador = new Jugador( username, pass, nombre, apellido,colores[jugadores.size()]);
+            Jugador jugador = new Jugador( username, pass, nombre, apellido, colores[jugadores.size()]);
             jugadores.add(jugador);
             return true;
         }
         else{
             return false;
         }
+    }
+    
+    public Jugador getJugadorByUsername(String username){
+        for(int i =0; i < jugadores.size(); i++){
+            Jugador j = jugadores.get(i);
+            if (j.getUsername().equalsIgnoreCase(username))
+                return j;
+        }
+        
+        return null;
+    }
+    
+    // devuelve true si el jugador tiene alguna ficha fuera de home
+    public boolean inHome(String username){
+        return getJugadorByUsername(username).puedeMoverFicha();
+    }
+    
+    
+    // devuelve true si el jugador tiene ESA ficha dentro del home
+    public boolean fichaInHome(String username, int numFicha){
+        return getJugadorByUsername(username).getFichaInHome(numFicha-1);
+    }
+    
+//    Devuelve la casilla donde va a caer la ficha sin afectar el tablero
+    public int obtenerCasillaMovimiento (String username, int numFicha, int dado) {
+        return getJugadorByUsername(username).getFicha(numFicha-1).casillaPosible(dado);
+    }
+    
+//    devuelve la casilla donde calló la ficha
+    public Casilla moverFicha(String username, int numFicha, int dado){
+        int casilla = getJugadorByUsername(username).moverFicha(numFicha-1, dado)-1;
+        this.tablero.setCasilla(casilla, getPosicionJugador(username), numFicha);
+        
+        return this.tablero.getCasilla(casilla);
+    }
+
+    public void liberarFicha(String username, int numFicha) {
+        getJugadorByUsername(username).liberarFicha(numFicha-1);
+    }
+
+//    Devuelve el username del usuario que fue desalojado y la ficha 
+    public int[] resetCasillaOcupada(int numCasilla){
+        return this.tablero.resetCasillaOcupada(numCasilla);
+//        String[] r = new String[2]; 
+//        try{
+//            r[0] = getUsernameJugador(posJugador[0]);
+//            r[1] = posJugador[1]+"";
+//            return r;
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            return r;
+//        }
+        
+    }
+    
+    public int getPosicionJugador(String username) {
+        for (int i = 0; i < jugadores.size(); i++){
+            if (jugadores.get(i).getUsername().equalsIgnoreCase(username))
+                return i+1;
+        }
+        
+        return -1;
+    }
+    
+    public String getUsernameJugador(int posicion) {
+        return jugadores.get(posicion).getUsername();
     }
 }

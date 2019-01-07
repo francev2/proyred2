@@ -37,6 +37,9 @@ public class Inicio extends javax.swing.JFrame {
         
         partidaButton.setVisible(false);
         jugadorButton.setVisible(false);
+        iniciarPartidaButton.setVisible(false);
+        pausarPartidaButton.setVisible(false);
+        
     }
 
     /**
@@ -52,8 +55,8 @@ public class Inicio extends javax.swing.JFrame {
         serverButton = new javax.swing.JButton();
         partidaButton = new javax.swing.JButton();
         jugadorButton = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        iniciarPartidaButton = new javax.swing.JButton();
+        pausarPartidaButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -85,12 +88,17 @@ public class Inicio extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("jButton3");
-
-        jButton1.setText("play");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        iniciarPartidaButton.setText("Iniciar Partida");
+        iniciarPartidaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                iniciarPartidaButtonActionPerformed(evt);
+            }
+        });
+
+        pausarPartidaButton.setText("Pausar Partida");
+        pausarPartidaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pausarPartidaButtonActionPerformed(evt);
             }
         });
 
@@ -99,38 +107,32 @@ public class Inicio extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(iniciarButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
-                        .addComponent(serverButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(140, 140, 140)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jugadorButton)
-                                    .addComponent(partidaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap()
+                .addComponent(iniciarButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                .addComponent(serverButton)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(112, 112, 112)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(iniciarPartidaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jugadorButton)
+                    .addComponent(partidaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pausarPartidaButton, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(partidaButton)
-                .addGap(1, 1, 1)
-                .addComponent(jButton1)
-                .addGap(7, 7, 7)
+                .addGap(31, 31, 31)
                 .addComponent(jugadorButton)
-                .addGap(36, 36, 36)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(iniciarPartidaButton)
+                .addGap(27, 27, 27)
+                .addComponent(pausarPartidaButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(serverButton)
                     .addComponent(iniciarButton))
@@ -151,6 +153,8 @@ public class Inicio extends javax.swing.JFrame {
            
             partidaButton.setVisible(true);
             jugadorButton.setVisible(true);
+            iniciarPartidaButton.setVisible(true);
+            pausarPartidaButton.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Error al crear Servidor");
@@ -231,7 +235,7 @@ public class Inicio extends javax.swing.JFrame {
                 + " " + password.getText());
             
             try {
-                cliente = new Cliente(ip.getText(), 9000 );
+                cliente = new Cliente(ip.getText(), 9000, this );
                 cliente.login(username.getText(), password.getText());
             } catch (ConnectException e){
                 JOptionPane.showMessageDialog( this, "No puede conectar al servidor");
@@ -243,20 +247,74 @@ public class Inicio extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_iniciarButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Partida partida = this.server.getPartidas().get(0);
-        Jugador jugador = partida.getJugadores().get(0);
-        TurnoJugador turno = new TurnoJugador(jugador);
-        turno.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void iniciarPartidaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarPartidaButtonActionPerformed
+        String[] salas = new String[this.server.getPartidas().size()];
+        for (int i = 0; i < this.server.getPartidas().size(); i++)
+            if (!this.server.getPartidas().get(i).isPartidaIniciada() || this.server.getPartidas().get(i).isPartidaPausada())
+                salas[i] = this.server.getPartidas().get(i).getNombre();
+        
+        JComboBox<String> combo = new JComboBox<>(salas);
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("salas:"));
+        panel.add(combo);
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "Iniciar una partida",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        
+        if (result == JOptionPane.OK_OPTION) {
+            System.out.println(combo.getSelectedItem());
+            
+//            if (apellido.getText().equals("") || username.getText().equals("")
+//                    || nombre.getText().equals("") || password.getText().equals("") )
+//                JOptionPane.showMessageDialog( this, "No puede ingresar valores nulos");
+//            else{
+                String r = this.server.iniciarPartida(this.server.getPartidaByName(combo.getSelectedItem().toString()));
+                JOptionPane.showMessageDialog( this, r);
+//            }
+            
+        
+        } else {
+            System.out.println("Cancelado");
+        }
+        
+    }//GEN-LAST:event_iniciarPartidaButtonActionPerformed
 
+    private void pausarPartidaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pausarPartidaButtonActionPerformed
+        String[] salas = new String[this.server.getPartidas().size()];
+        for (int i = 0; i < this.server.getPartidas().size(); i++)
+            if (this.server.getPartidas().get(i).isPartidaIniciada() )
+                salas[i] = this.server.getPartidas().get(i).getNombre();
+        
+        JComboBox<String> combo = new JComboBox<>(salas);
+        JPanel panel = new JPanel(new GridLayout(0, 1));
+        panel.add(new JLabel("salas:"));
+        panel.add(combo);
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "Pausar una partida",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        
+        if (result == JOptionPane.OK_OPTION) {
+            System.out.println(combo.getSelectedItem());
+            String r = this.server.pausarPartida(this.server.getPartidaByName(combo.getSelectedItem().toString()));
+            JOptionPane.showMessageDialog( this, r);
+
+            
+        
+        } else {
+            System.out.println("Cancelado");
+        }
+    }//GEN-LAST:event_pausarPartidaButtonActionPerformed
+
+    public void mostrarMensaje(String mensaje){
+        JOptionPane.showMessageDialog( this, mensaje);
+    }
     private Cliente cliente;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton iniciarButton;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton iniciarPartidaButton;
     private javax.swing.JButton jugadorButton;
     private javax.swing.JButton partidaButton;
+    private javax.swing.JButton pausarPartidaButton;
     private javax.swing.JButton serverButton;
     // End of variables declaration//GEN-END:variables
 }

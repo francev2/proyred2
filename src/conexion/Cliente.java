@@ -6,6 +6,7 @@
 package conexion;
 
 import core.Jugador;
+import core.Movimiento;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ludo.Inicio;
 import ludo.Pantalla;
 
 /**
@@ -28,13 +30,19 @@ public class Cliente {
     private ObjectInputStream entrada;
     String username;
     boolean turno;
+    int dado;
+    int numFicha;
+    int intentos = 0;
+    boolean finalizo = false;
     private Pantalla pantalla;
+    private Inicio inicio;
     private boolean inicioDePartida;
     
+    
 
-    public Cliente(String ipServer, int ipPort) throws IOException {
+    public Cliente(String ipServer, int ipPort, Inicio inicio) throws IOException {
         this.ipServer = ipServer;
-        
+        this.inicio = inicio;
         
             this.socket = new Socket(ipServer, ipPort);
             
@@ -59,6 +67,9 @@ public class Cliente {
     }
     
     public void login(String username, String password){
+        
+//        this.inicio.mostrarMensaje("Iniciando conexión ...");
+        
         Paquete p = new Paquete();
         p.setError(false);
         p.setTipo(Tipo.LOGIN);
@@ -69,16 +80,20 @@ public class Cliente {
         enviarMensaje(p);
     }
     
-    
+    public boolean isTurno(){
+        return this.turno;
+    }
     
 
     public String procesarRespuesta(Paquete m) {
-            
-        if (m.getTipo() == Tipo.LOGIN){
+        Tipo  tipo= m.getTipo();
+        if (tipo == Tipo.LOGIN){
             if(m.isError()){
                 try {
                     System.out.println(m.getMensaje()+"2");
+//                    this.pantalla.dispose();
                     cerrarConexion();
+                    this.inicio.mostrarMensaje(m.getMensaje());
                     return m.getMensaje();
                 } catch (Throwable ex) {
                     Logger.getLogger(Cliente.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,10 +101,17 @@ public class Cliente {
             }else{
                 this.username = m.getUsername();
                 System.out.println(m.getMensaje()+"1");
+                this.pantalla = new Pantalla(this);
+                this.pantalla.setVisible(true);
+                pantalla.mostrarMensaje("Esperando a todos los jugadores ...");
             }
             
             return m.getMensaje();  
-        } if (m.getTipo() == Tipo.TURNO || m.getTipo() == Tipo.INICIODEPARTIDA){
+        } else if (tipo == Tipo.TURNO || tipo == Tipo.INICIODEPARTIDA){
+            if (m.isError()){
+                pantalla.mostrarMensaje(m.getMensaje());
+                return  m.getMensaje();
+            }
             if (m.getUsername().equalsIgnoreCase(this.username)){
                 turno = true;
                 pantalla.habilitarDadoButton(turno);
@@ -110,33 +132,107 @@ public class Cliente {
 //                turno = false;
 //                return "El turno es de "+ m.getUsername();
 //            }
-        } if (m.getTipo() == Tipo.PAUSARPARTIDA) {
+        } else if (tipo == Tipo.PAUSARPARTIDA) {
             turno = false;
             pantalla.habilitarDadoButton(false);
             pantalla.mostrarMensaje("Partida pausada");
             return "Partida pausada";
         
-        } if ( m.getTipo() == Tipo.MOVIMIENTO ) {
+        } else if ( tipo == Tipo.MOVIMIENTO ) {
             if (m.isError()){
-                pantalla.mostrarMensaje(m.getMensaje());
+                if (m.getMovimiento().isError()){
+                    this.dado = Integer.parseInt(m.getMensaje());
+                    this.turno = true;
+                    this.intentos = 1;
+                    pantalla.mostrarMensaje(m.getMovimiento().getMensaje());
+                }else
+                    pantalla.mostrarMensaje(m.getMensaje());
+                    
                 return m.getMensaje();
-            }else{
+            } else {
 //                un jugador se movio
+                if (m.getMovimiento().isError()){
+                    pantalla.mostrarMensaje(m.getMovimiento().getMensaje());
+                }else{
+                    int ficha = m.getMovimiento().getNumFicha()-1;
+                    int x = m.getMovimiento().getCasilla().getX();
+                    int y = m.getMovimiento().getCasilla().getY();
+                    
+                    pantalla.moverFicha(ficha, x, y);
+                }
                 return "Se movió el jugador";
             }
+        } else if ( tipo == Tipo.COLOR ){
+            String usernameLabel = m.getUsername();
+            String message = "Se unió "+usernameLabel+" a la partida ";
+            
+            if (usernameLabel.equalsIgnoreCase(this.username))
+                usernameLabel = "Tú";
+                
+            pantalla.setColorJugador(m.getMensaje(), usernameLabel);
+            
+            pantalla.mostrarMensaje(message);
+            
+            return message;
+        } else if (tipo == Tipo.LLEGO){
+            this.finalizo = true;
+            pantalla.mostrarMensaje(m.getMensaje());
+            return m.getMensaje();
         }else{
             return m.getMensaje();
         }
                        
     }
     
-    public void lanzarDado(){
+    public void enviarFicha(){
         if (!turno){
             pantalla.mostrarMensaje("No es tu turno");
         }else{
-            int dado = (int)(1+Math.random()*6);
-            pantalla.mostrarDado(dado);
-//            enviarMensaje(new Paquete(this.username, Tipo.DADO, false, ""+dado) );
+            if (numFicha == 0 || numFicha > 4)
+                pantalla.mostrarMensaje("Selecione una ficha");
+            else{
+                
+                enviarMensaje(new Paquete(this.username, Tipo.DADO, false, ""+this.dado, new Movimiento(false, null, this.numFicha)) );
+                this.numFicha = 0;
+                this.dado = 0;
+                this.turno = false;
+                this.intentos = 0;
+            }
+        }
+    }
+    
+    public void seleccionarFicha(int numFicha){
+        if (turno){
+            if (this.dado == 0){
+                pantalla.mostrarMensaje("¡Lanza el dado!");
+            }
+            else{
+                this.numFicha = numFicha;
+                pantalla.mostrarMensaje("Seleccionaste la ficha "+numFicha+"\n Presiona el botón de enviar ficha");
+            }
+        }else{
+            pantalla.mostrarMensaje("No es tu turno");
+        }
+    }
+    
+    public void resetFicha(){
+        this.numFicha = 0;
+    }
+    
+    public void lanzarDado(){
+        if (!turno){
+            pantalla.mostrarMensaje("No es tu turno");
+        } else if (!finalizo) {
+            if (intentos == 0){
+                this.intentos ++;
+                this.dado = (int)(1+(Math.random()*6));
+                pantalla.mostrarDado(this.dado);
+
+                pantalla.mostrarMensaje("Selecciona una ficha");
+            }
+            else{
+                pantalla.mostrarMensaje("Solo puedes lanzar el dado 1 vez");
+            }
         }
     }
     

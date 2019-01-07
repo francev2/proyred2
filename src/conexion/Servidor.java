@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package conexion;
+import core.Casilla;
+import core.Jugador;
+import core.Movimiento;
 import core.Partida;
 import java.net.*;
 import java.io.*;
@@ -54,13 +57,13 @@ public class Servidor {
     }
 
     public void setPuerto(int puerto) {
-        this.puerto = this.puerto;
+        this.puerto = puerto;
     }
     
     public Servidor(int puerto) throws IOException{
         this.puerto = puerto;
-        partidas = new ArrayList<Partida>();
-        conexiones = new ArrayList<ConexionUsuario>();
+        partidas = new ArrayList<>();
+        conexiones = new ArrayList<>();
         
         server = new ServerSocket(puerto);
         
@@ -119,13 +122,18 @@ public class Servidor {
     
     
     public String iniciarPartida(Partida p){
-        if ( p.getJugadores().size() < 4 )
+        if ( p.getJugadores().size() < 1 )
             return "La partida no tiene jugadores suficientes";
         else{
             String user = p.getJugadores().get(0).getUsername();
             p.setTurno(user);
-            p.setInicioDePartida(true);
+            
             p.setPartidaIniciada(true);
+            
+            if (p.isPartidaPausada())
+                p.setPartidaPausada(false);
+            else
+                p.setInicioDePartida(true);
             
             
             Paquete paquete = new Paquete();
@@ -144,7 +152,7 @@ public class Servidor {
         }else if (p.getTurno() == null ){
             return " La partida ya esta pausada";
         }else{
-            p.setPartidaIniciada(true);
+            p.setPartidaPausada(true);
             Paquete paquete = new Paquete();
             paquete.setTipo(Tipo.PAUSARPARTIDA);
             paquete.setError(false);
@@ -195,7 +203,7 @@ public class Servidor {
     
     public Paquete loginJugador(String username, String pass){
         Paquete p = new Paquete();
-        
+        p.setTipo(Tipo.LOGIN);
         
         for (int i = 0; i < partidas.size(); i ++){
             System.out.println(partidas.get(i).getNombre());
@@ -204,7 +212,6 @@ public class Servidor {
                 
                 if (partidas.get(i).getJugadores().get(j).getUsername().equalsIgnoreCase(username)){
                     p.setError(false);
-                    p.setTipo(Tipo.LOGIN);
                     p.setMensaje(partidas.get(i).getNombre());
                     p.setUsername(partidas.get(i).getJugadores().get(j).getUsername());
                     return p;
@@ -225,11 +232,11 @@ public class Servidor {
     }
     
     private boolean setDadoInicio(Partida partida, String username, String dado, ConexionUsuario c){
-        for (int i = 0; i < 4 ; i++){
+        for (int i = 0; i < 2 ; i++){
             if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(username)){
                 partida.getInicio()[i][0] = username;
                 partida.getInicio()[i][1] = dado;
-                if (i == 3 ){
+                if (i == 1 ){
                     return true;
                 } else {
                     String siguienteTurno = siguienteJugador(partida, username);
@@ -245,13 +252,14 @@ public class Servidor {
     }
     
     private String siguienteJugador(Partida partida, String currentUsername){
-        for (int i = 0; i < 4 ; i++){
-            if (partida.getJugadores().get(i).getUsername() == currentUsername){
-                if (i == 3)
+        for (int i = 0; i < 2 ; i++){
+            if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(currentUsername)){
+                if (i == 1)
                 {
+                    partida.setTurno(partida.getJugadores().get(0).getUsername());
                     return partida.getJugadores().get(0).getUsername();
                 }else{
-                    
+                    partida.setTurno(partida.getJugadores().get(i+1).getUsername());
                     return partida.getJugadores().get(i+1).getUsername();
                 }        
             }
@@ -263,7 +271,7 @@ public class Servidor {
     private String primero(Partida partida){
         int num = 0;
         String username = "";
-        for (int i = 0; i< 4 ; i++){
+        for (int i = 0; i< 2 ; i++){
             int valor = Integer.parseInt(partida.getInicio()[i][1]);
             if ( valor > num){
                 num = valor;
@@ -271,22 +279,47 @@ public class Servidor {
             }
         }
         
+        partida.setTurno(username);
         return username;
     }
 
     private void procesarSolicitud(Paquete sol, ConexionUsuario c) {
         if (sol.getTipo() == Tipo.LOGIN){
-//            conexiones.get(conexiones.indexOf(c)).setUsername(sol.getUsername());
-            c.setUsername(sol.getUsername());
-            System.out.println(sol.getUsername()+"6");
-            enviarMensaje(c, loginJugador(sol.getUsername(), sol.getMensaje()));
+            Paquete p = this.loginJugador(sol.getUsername(), sol.getMensaje());            
+            enviarMensaje(c, p);
+            
+            if (p.isError()){
+//                Borrar conexion
+                System.out.println(sol.getUsername()+"10");
+            }else{
+                c.setUsername(sol.getUsername());
+                Partida pa = getPartidaByUsername(sol.getUsername());
+                
+                if (pa.isPartidaIniciada())
+                    enviarMensaje(c, new Paquete(pa.getTurno(), Tipo.TURNO, false));
+                    
+                enviarMensajePartida(pa, new Paquete(sol.getUsername(), Tipo.COLOR, false, pa.getJugadorByUsername(sol.getUsername()).getColores().value()));
+                
+                for(int i = 0; i < conexiones.size(); i++){
+                    if (!conexiones.get(i).getUsername().isEmpty())
+                        if (pa.getJugadorByUsername(conexiones.get(i).getUsername()) == null) {
+                        } else {
+                            enviarMensaje(c, new Paquete(conexiones.get(i).getUsername(), Tipo.COLOR, false, pa.getJugadorByUsername(conexiones.get(i).getUsername()).getColores().value()));
+                        }
+                }
+                
+                    
+                System.out.println(sol.getUsername()+"6");
+            }
+            
+            
             for (int i=0; i < conexiones.size(); i ++ ){
                 System.out.println(conexiones.get(i).getUsername() + "3");
             }
         }else if (sol.getTipo() == Tipo.DADO){
             
             if (getPartidaByUsername(sol.getUsername()).isInicioDePartida()){
-                if (getPartidaByUsername(sol.getUsername()).getInicio()[3][1] == null){
+                if (getPartidaByUsername(sol.getUsername()).getInicio()[1][1] == null){
                     boolean fin = setDadoInicio(getPartidaByUsername(sol.getUsername()), sol.getUsername(), sol.getMensaje(), c);
                     if (fin) {
                         getPartidaByUsername(sol.getUsername()).setInicioDePartida(false);
@@ -297,7 +330,105 @@ public class Servidor {
             } else if (getPartidaByUsername(sol.getUsername()).isPartidaPausada()) {
                 enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "La partida esta pausada"));
             } else {
-//                MOvimiento esperar mover logica etc
+//                Movimiento esperar mover logica etc
+                    String username = sol.getUsername();
+                    Partida pa = getPartidaByUsername(sol.getUsername());
+                    int dado = Integer.parseInt(sol.getMensaje());
+                    int numFicha = sol.getMovimiento().getNumFicha();
+                    
+//                  comprueba si alguna de las fichas del jugador esta fuera del home
+                    if(pa.inHome(username)){
+                        
+//                      comprueba si la ficha esta en home y si el dado es 6 para poder salir
+                        if (pa.fichaInHome(username, numFicha) && dado == 6){
+//                          La ficha sale de home
+                            getPartidaByUsername(sol.getUsername()).liberarFicha(username, numFicha);
+
+//                          le toca turno otra vez
+                            enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
+                            enviarMensaje(c, new Paquete(username, Tipo.TURNO, false));
+                            
+                            
+//                      el dado no es 6 pero si tiene fichas para mover menos la que seleccionó 
+                        }else if ( pa.fichaInHome(username, numFicha) && dado != 6 ) {
+                            
+//                           Se le pide que selecione otra ficha
+                            enviarMensaje(c, new Paquete(username, Tipo.MOVIMIENTO, true, dado+"", new Movimiento(true, "Seleciona otra ficha")));
+                            
+                            
+                            
+//                      La ficha no esta en HOME y puede moverse
+                        }else if (!pa.fichaInHome(username, numFicha)) {
+                            
+//                          Obtiene la casilla donde cae la ficha sin modificar ningún estado
+                            int casilla = pa.obtenerCasillaMovimiento(username, numFicha, dado);
+                            
+                            if (casilla == -1){
+//                              La casilla ya está en la meta
+                                enviarMensaje(c, new Paquete(username, Tipo.MOVIMIENTO, true, dado+"", new Movimiento(true, "Esta ficha ya esta en meta, Seleciona otra ficha")));
+                            }else if (casilla == 100){
+//                              La casilla llego a la meta
+                                Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
+                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                
+//                              Siguiente Jugador
+                                enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+
+//                          comprobar que la casilla esta ocupada
+                            }else if (pa.getTablero().isCasillaOcupada(casilla-1)){
+                                
+//                              Comprobar si esta ocupada por una casilla propia
+                                if(pa.getTablero().casillaPropia(pa.getPosicionJugador(username), casilla)){
+//                                  Pedirle que seleccione otra ficha
+                                    enviarMensaje(c, new Paquete(username, Tipo.MOVIMIENTO, true, dado+"", new Movimiento(true, "Seleciona otra ficha")));
+                                
+//                              Esta ocupada por una casilla contraria
+                                }else{
+//                                  Mover la ficha contraria a home
+                                    int[] userDesalojado = getPartidaByUsername(sol.getUsername()).resetCasillaOcupada(casilla-1);
+//                                  Encontrar la casilla de home que pertenece a esa pieza
+                                    Casilla casillaHome = getPartidaByUsername(sol.getUsername()).getTablero().getCasillaFicha(((userDesalojado[0]-1)*4)+userDesalojado[1]-1);
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, userDesalojado[0]+"",new Movimiento(false, casillaHome, ((userDesalojado[0]-1)*4)+userDesalojado[1]-1)));
+
+//                                  Mover la ficha a esa casilla
+                                    Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                
+//                                  Siguiente Jugador
+                                    enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+
+                                }
+                                
+//                          casilla no ocupada
+                            }else{
+                                Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
+                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"", new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                
+//                              Siguiente Jugador
+                                enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+                            }
+                            
+
+                        }
+                        
+//                  Ninguna pieza esta fuera del home / todas las piezas estan en home
+                    }else{
+                        if (dado == 6){
+//                            La ficha sale de home
+                            getPartidaByUsername(sol.getUsername()).liberarFicha(username, numFicha);
+//                            le toca turno otra vez
+                            enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
+                            enviarMensaje(c, new Paquete(username, Tipo.TURNO, false));
+                            
+                            
+//                      No sacó 6 y por lo tanto no puede moverse, turno siguiente jugador
+                        }else{
+                            enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "No puedes mover la ficha", new Movimiento(false, null)) );
+                            enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(username), username), Tipo.TURNO, false));
+                        }
+                    }
+                                       
+                    
             }
         }
     }
@@ -348,9 +479,7 @@ public class Servidor {
                 try {
                     Paquete sol = (Paquete) c.getEntrada().readObject();
                     s.procesarSolicitud(sol,this.c);
-                } catch (IOException ex) {
-                    Logger.getLogger(ConexionUsuario.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(ConexionUsuario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

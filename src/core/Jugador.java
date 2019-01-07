@@ -72,6 +72,8 @@ public class Jugador {
     public void setPass(String pass) {
         this.pass = pass;
     }
+    
+    public Colores getColores(){return this.fichas[0].getColor();}
 
     public String getColor(){ return this.fichas[0].getUrlIcon();}
     
@@ -86,10 +88,16 @@ public class Jugador {
     }
     
     
+    public Ficha getFicha(int i){
+        return this.fichas[i];
+    }
+    
+    
     public void liberarFicha(int i){
         this.fichas[i].setHome(false);
     }
     
+//    Devuelve la casilla donde calló la ficha
     public int moverFicha(int i,int movimientos){
         this.fichas[i].moverFicha(movimientos);
         return this.fichas[i].getCasilla();

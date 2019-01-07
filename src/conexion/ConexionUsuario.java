@@ -74,6 +74,7 @@ public class ConexionUsuario {
     
     public ConexionUsuario(Socket socket){
         this.socket = socket;
+        this.username = "";
         try {
             salida = new ObjectOutputStream(socket.getOutputStream());
             entrada = new ObjectInputStream(socket.getInputStream());

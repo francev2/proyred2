@@ -12,5 +12,6 @@ package core;
 enum TipoCasilla{
 	NORMAL,
         PASILLO,
-        META;
+        META,
+        HOME;
 }

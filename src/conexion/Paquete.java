@@ -6,6 +6,7 @@
 package conexion;
 
 import java.io.Serializable;
+import core.Movimiento;
 
 /**
  *
@@ -16,6 +17,7 @@ public class Paquete implements Serializable {
     private String mensaje;
     private Tipo tipo;
     private boolean error; 
+    private Movimiento movimiento;
 
     public Paquete() {
     }
@@ -27,12 +29,36 @@ public class Paquete implements Serializable {
         this.tipo = tipo;
         this.error = error;
     }
+    public Paquete(String username, Tipo tipo, boolean error, Movimiento movimiento) {
+        this.username = username;
+        this.tipo = tipo;
+        this.error = error;
+        this.movimiento = movimiento;
+    }
+    
+    
+    public Paquete(String username, Tipo tipo, boolean error, String mensaje, Movimiento movimiento) {
+        this.username = username;
+        this.tipo = tipo;
+        this.error = error;
+        this.movimiento = movimiento;
+        this.mensaje = mensaje;
+    }
 
     public Paquete(String username, Tipo tipo, boolean error, String mensaje) {
         this.username = username;
         this.mensaje = mensaje;
         this.tipo = tipo;
         this.error = error;
+        
+    }
+
+    public Movimiento getMovimiento() {
+        return movimiento;
+    }
+
+    public void setMovimiento(Movimiento movimiento) {
+        this.movimiento = movimiento;
     }
     
     

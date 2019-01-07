@@ -5,11 +5,13 @@
  */
 package core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Francisco
  */
-public class Casilla {
+public class Casilla implements Serializable{
     private int x;
     private int y;
     private boolean ocupada;

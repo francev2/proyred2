@@ -27,7 +27,7 @@ public enum Colores {
 
         @Override
         public int inicio() {
-            return 0;
+            return 13;
         }
 
         @Override
@@ -50,7 +50,7 @@ public enum Colores {
         
         @Override
         public int inicio() {
-            return 13;
+            return 0;
         }
 
         @Override
@@ -73,7 +73,7 @@ public enum Colores {
 
         @Override
         public int inicio() {
-            return 26;
+            return 39;
         }
 
         @Override
@@ -95,7 +95,7 @@ public enum Colores {
         
         @Override
         public int inicio() {
-            return 39;
+            return 26;
         }
 
         @Override

@@ -3,26 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/conexion/ConexionUsuario.java</file>
-            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/ludo/Inicio.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Fichas/Ficha.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/conexion/Cliente.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Movimiento.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/conexion/Paquete.java</file>
-            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Partida.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/conexion/Tipo.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Fichas/Colores.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/ludo/Pantalla.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Casilla.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Partida.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Jugador.java</file>
+            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/core/Tablero.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/conexion/Servidor.java</file>
             <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/ludo/Ludo.java</file>
-            <file>file:/C:/Users/Francisco/Desktop/apps/Ludo/src/ludo/Pantalla.java</file>
-=======
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/core/Jugador.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/ludo/Ludo.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/conexion/Servidor.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/ludo/TurnoJugador.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/ludo/Pantalla.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/core/Partida.java</file>
-            <file>file:/C:/Users/Fabian%20Graterol/Documents/NetBeansProjects/redes%202/proyred2/src/ludo/Inicio.java</file>
->>>>>>> aa5e3ce315728d30fe4ea01d0f64782be3ef09bd
         </group>
     </open-files>
 </project-private>

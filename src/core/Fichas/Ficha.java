@@ -28,6 +28,14 @@ public class Ficha {
         this.inicio=this.color.inicio();
         this.casilla = inicio;
     }
+
+    public Colores getColor() {
+        return color;
+    }
+
+    public void setColor(Colores color) {
+        this.color = color;
+    }
     
     public void setCasilla(int casilla){ this.casilla = casilla;}
     
@@ -65,6 +73,46 @@ public class Ficha {
             }
         }
         System.out.println("Movimientos: " + this.movimientos + "posicion: " + this.casilla);
+    }
+    
+//  Devuelve la casilla donde va a caer la ficha
+    public int casillaPosible(int dado) {
+        
+        int movimiento = this.movimientos + dado;
+        
+        if (estaEnMeta){
+            return -1;
+        } else if (meta) {
+            int pasillo[] = color.pasillo();
+            if (movimiento == 5){
+                return 100;
+            } else if (movimiento > 5){
+                int aux = movimiento - 5;
+                movimiento = 5 - aux;
+                return pasillo[movimiento];
+            }else{
+                return pasillo[movimiento];
+            }
+        }else{
+            
+            if (movimiento <= 52 ){
+                return this.casilla + dado;
+            } else {
+                movimiento -= 52;
+                int pasillo[] = color.pasillo();
+                if (movimiento == 5){
+                    return 100;
+                } else if (movimiento > 5){
+                    int aux = movimiento - 5;
+                    movimiento = 5 - aux;
+                    return pasillo[movimiento];
+                }else{
+                    return pasillo[movimiento];
+                }
+            }
+        }
+        
+//        System.out.println("Movimientos: " + this.movimientos + "posicion: " + this.casilla);
     }
     
     public String getUrlIcon(){
