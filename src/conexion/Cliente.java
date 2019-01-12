@@ -54,6 +54,10 @@ public class Cliente {
        
     }
     
+    public void pasarTurno(String user){
+        this.enviarMensaje(new Paquete(user,Tipo.TURNO,false));
+    }
+    
     private boolean enviarMensaje(Paquete p){
         try {
             this.salida.flush();
