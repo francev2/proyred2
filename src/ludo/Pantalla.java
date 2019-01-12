@@ -206,12 +206,12 @@ public class Pantalla extends javax.swing.JFrame {
         dadoButton = new javax.swing.JLabel();
         mensaje = new java.awt.Label();
         dadoPanel = new javax.swing.JPanel();
-        moverFicha = new javax.swing.JLabel();
         ficha4 = new javax.swing.JLabel();
         ficha3 = new javax.swing.JLabel();
         ficha2 = new javax.swing.JLabel();
         ficha1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        pasarTurno = new javax.swing.JButton();
+        moverFicha = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1100, 700));
@@ -261,13 +261,6 @@ public class Pantalla extends javax.swing.JFrame {
             .addGap(0, 180, Short.MAX_VALUE)
         );
 
-        moverFicha.setText("jLabel1");
-        moverFicha.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                moverFichaMouseClicked(evt);
-            }
-        });
-
         ficha4.setText("ficha4");
         ficha4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -296,10 +289,17 @@ public class Pantalla extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("Terminar turno");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        pasarTurno.setText("Terminar turno");
+        pasarTurno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                pasarTurnoActionPerformed(evt);
+            }
+        });
+
+        moverFicha.setText("Mover Ficha");
+        moverFicha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moverFichaActionPerformed(evt);
             }
         });
 
@@ -324,9 +324,9 @@ public class Pantalla extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addComponent(ficha3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(moverFicha, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pasarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(moverFicha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(90, 90, 90))
         );
         jPanel1Layout.setVerticalGroup(
@@ -335,17 +335,17 @@ public class Pantalla extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(mensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(61, 61, 61)
-                        .addComponent(moverFicha, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGap(135, 135, 135)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(ficha3, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(ficha1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(59, 59, 59)
-                                .addComponent(jButton1)))
+                                .addGap(108, 108, 108)
+                                .addComponent(moverFicha)
+                                .addGap(64, 64, 64)
+                                .addComponent(pasarTurno)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -377,7 +377,7 @@ public class Pantalla extends javax.swing.JFrame {
                     .addComponent(panelTablero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 30, Short.MAX_VALUE)))
+                        .addGap(0, 14, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -415,15 +415,15 @@ public class Pantalla extends javax.swing.JFrame {
         cliente.seleccionarFicha(4);
     }//GEN-LAST:event_ficha4MouseClicked
 
-    private void moverFichaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moverFichaMouseClicked
-        // TODO add your handling code here:
-        cliente.enviarFicha();
-    }//GEN-LAST:event_moverFichaMouseClicked
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void pasarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasarTurnoActionPerformed
         // TODO add your handling code here:
         cliente.pasarTurno(user.getText());
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_pasarTurnoActionPerformed
+
+    private void moverFichaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moverFichaActionPerformed
+        // TODO add your handling code here:
+        cliente.enviarFicha();
+    }//GEN-LAST:event_moverFichaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -433,11 +433,11 @@ public class Pantalla extends javax.swing.JFrame {
     private javax.swing.JLabel ficha2;
     private javax.swing.JLabel ficha3;
     private javax.swing.JLabel ficha4;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private java.awt.Label mensaje;
-    private javax.swing.JLabel moverFicha;
+    private javax.swing.JButton moverFicha;
     private javax.swing.JPanel panelTablero;
+    private javax.swing.JButton pasarTurno;
     // End of variables declaration//GEN-END:variables
 
     private void inicializarFichas() {

@@ -55,7 +55,11 @@ public class Cliente {
     }
     
     public void pasarTurno(String user){
-        this.enviarMensaje(new Paquete(user,Tipo.TURNO,false));
+        if (turno)
+            this.enviarMensaje(new Paquete(user,Tipo.TURNO,false));
+        else
+            pantalla.mostrarMensaje("No es tu turno");
+            
     }
     
     private boolean enviarMensaje(Paquete p){
