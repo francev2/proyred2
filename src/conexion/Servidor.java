@@ -253,16 +253,17 @@ public class Servidor {
     
     private String siguienteJugador(Partida partida, String currentUsername){
         for (int i = 0; i < 2 ; i++){
-            if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(currentUsername)){
-                if (i == 1)
-                {
-                    partida.setTurno(partida.getJugadores().get(0).getUsername());
-                    return partida.getJugadores().get(0).getUsername();
-                }else{
-                    partida.setTurno(partida.getJugadores().get(i+1).getUsername());
-                    return partida.getJugadores().get(i+1).getUsername();
-                }        
-            }
+            if (!partida.getJugadores().get(i).isFinalizo())
+                if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(currentUsername)){
+                    if (i == 1)
+                    {
+                        partida.setTurno(partida.getJugadores().get(0).getUsername());
+                        return partida.getJugadores().get(0).getUsername();
+                    }else{
+                        partida.setTurno(partida.getJugadores().get(i+1).getUsername());
+                        return partida.getJugadores().get(i+1).getUsername();
+                    }        
+                }
         }
         
         return null;
@@ -295,8 +296,6 @@ public class Servidor {
                 c.setUsername(sol.getUsername());
                 Partida pa = getPartidaByUsername(sol.getUsername());
                 
-                if (pa.isPartidaIniciada())
-                    enviarMensaje(c, new Paquete(pa.getTurno(), Tipo.TURNO, false));
                     
                 enviarMensajePartida(pa, new Paquete(sol.getUsername(), Tipo.COLOR, false, pa.getJugadorByUsername(sol.getUsername()).getColores().value()));
                 
@@ -304,8 +303,30 @@ public class Servidor {
                     if (!conexiones.get(i).getUsername().isEmpty())
                         if (pa.getJugadorByUsername(conexiones.get(i).getUsername()) == null) {
                         } else {
-                            enviarMensaje(c, new Paquete(conexiones.get(i).getUsername(), Tipo.COLOR, false, pa.getJugadorByUsername(conexiones.get(i).getUsername()).getColores().value()));
+                            enviarMensaje(c, new Paquete(conexiones.get(i).getUsername(), Tipo.COLOR, false, pa.getJugadorByUsername(conexiones.get(i).getUsername()).getColores().value() ));
                         }
+                }
+                
+                
+                
+                //mandar el estado del tablero al jugador que acaba de llegar
+                if (pa.isPartidaIniciada()){
+                    
+                    for (int i = 0; i < pa.getJugadores().size(); i++){
+                        for (int j = 0; j < 4; j++){
+                            Casilla casilla = pa.getTablero().getCasilla(pa.getJugadores().get(i).getFicha(j).getCasilla()-1);
+                            enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, false, "Estdo del tablero", new Movimiento(false, casilla, ((i-1)*4)+(j-1) ) ));
+                        }
+                    }
+                    
+                    enviarMensaje(c, new Paquete(pa.getTurno(), Tipo.TURNO, false));
+                }
+                
+                
+                
+                if (pa.isPartidaTerminada()){
+                    String ganador = getPartidaByUsername(sol.getUsername()).getFinalizaron().get(0).getUsername();
+                    enviarMensajePartida(getPartidaByUsername(sol.getUsername()), new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "Partida finalizada. GANADOR " +ganador , new Movimiento(false, null)));
                 }
                 
                     
@@ -317,6 +338,12 @@ public class Servidor {
                 System.out.println(conexiones.get(i).getUsername() + "3");
             }
         }else if (sol.getTipo() == Tipo.DADO){
+            
+            if (getPartidaByUsername(sol.getUsername()).isPartidaTerminada()){
+                String ganador = getPartidaByUsername(sol.getUsername()).getFinalizaron().get(0).getUsername();
+                enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "Partida finalizada. GANADOR " +ganador , new Movimiento(false, null)));
+                return;
+            }
             
             if (getPartidaByUsername(sol.getUsername()).isInicioDePartida()){
                 if (getPartidaByUsername(sol.getUsername()).getInicio()[1][1] == null){
@@ -366,13 +393,23 @@ public class Servidor {
                             if (casilla == -1){
 //                              La casilla ya está en la meta
                                 enviarMensaje(c, new Paquete(username, Tipo.MOVIMIENTO, true, dado+"", new Movimiento(true, "Esta ficha ya esta en meta, Seleciona otra ficha")));
+                                
                             }else if (casilla == 100){
 //                              La casilla llego a la meta
                                 Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
-                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+(numFicha-1))));
                                 
-//                              Siguiente Jugador
-                                enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+                                // comprobar si el jugador Tiene todas sus fchas en meta
+                                if (pa.finalizo(sol.getUsername())){
+                                    getPartidaByUsername(username).addGanador(pa.getJugadorByUsername(username));
+                                    getPartidaByUsername(username).getJugadorByUsername(username).setFinalizo(true);
+                                    enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+                                }else if (dado == 6){
+                                    enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
+                                    enviarMensaje(c, new Paquete(username, Tipo.TURNO, false));
+                                }else
+//                                  Siguiente Jugador
+                                    enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
 
 //                          comprobar que la casilla esta ocupada
                             }else if (pa.getTablero().isCasillaOcupada(casilla-1)){
@@ -388,24 +425,32 @@ public class Servidor {
                                     int[] userDesalojado = getPartidaByUsername(sol.getUsername()).resetCasillaOcupada(casilla-1);
 //                                  Encontrar la casilla de home que pertenece a esa pieza
                                     Casilla casillaHome = getPartidaByUsername(sol.getUsername()).getTablero().getCasillaFicha(((userDesalojado[0]-1)*4)+userDesalojado[1]-1);
-                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, userDesalojado[0]+"",new Movimiento(false, casillaHome, ((userDesalojado[0]-1)*4)+userDesalojado[1]-1)));
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, userDesalojado[0]+"",new Movimiento(false, casillaHome, ((userDesalojado[0]-1)*4)+(userDesalojado[1]-1))));
 
 //                                  Mover la ficha a esa casilla
                                     Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
-                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+(numFicha-1))));
                                 
-//                                  Siguiente Jugador
-                                    enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+                                    if (dado == 6){
+                                        enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
+                                        enviarMensaje(c, new Paquete(username, Tipo.TURNO, false));
+                                    }else
+//                                      Siguiente Jugador
+                                        enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
 
                                 }
                                 
 //                          casilla no ocupada
                             }else{
                                 Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
-                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"", new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+numFicha-1)));
+                                enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"", new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+(numFicha-1))));
                                 
-//                              Siguiente Jugador
-                                enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
+                                if (dado == 6){
+                                    enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
+                                    enviarMensaje(c, new Paquete(username, Tipo.TURNO, false));
+                                }else
+//                                  Siguiente Jugador
+                                    enviarMensajePartida(pa, new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), username), Tipo.TURNO, false));
                             }
                             
 
@@ -430,6 +475,22 @@ public class Servidor {
                                        
                     
             }
+            
+            if (getPartidaByUsername(sol.getUsername()).partidaFinalizada()){
+                String ganador = getPartidaByUsername(sol.getUsername()).getFinalizaron().get(0).getUsername();
+                enviarMensajePartida(getPartidaByUsername(sol.getUsername()), new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "GANADOR " +ganador , new Movimiento(false, null)));
+            }
+            
+            
+        }else if (sol.getTipo() == Tipo.TURNO){
+            
+            if (getPartidaByUsername(sol.getUsername()).isPartidaTerminada()){
+                String ganador = getPartidaByUsername(sol.getUsername()).getFinalizaron().get(0).getUsername();
+                enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, true, "Partida finalizada. GANADOR " +ganador , new Movimiento(false, null)));
+                return;
+            }
+            
+            enviarMensajePartida(getPartidaByUsername(sol.getUsername()), new Paquete(siguienteJugador(getPartidaByUsername(sol.getUsername()), sol.getUsername()), Tipo.TURNO, false));
         }
     }
     

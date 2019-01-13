@@ -54,9 +54,9 @@ public class Cliente {
        
     }
     
-    public void pasarTurno(String user){
+    public void pasarTurno(){
         if (turno)
-            this.enviarMensaje(new Paquete(user,Tipo.TURNO,false));
+            this.enviarMensaje(new Paquete(this.username,Tipo.TURNO,false));
         else
             pantalla.mostrarMensaje("No es tu turno");
             
@@ -162,7 +162,7 @@ public class Cliente {
                 if (m.getMovimiento().isError()){
                     pantalla.mostrarMensaje(m.getMovimiento().getMensaje());
                 }else{
-                    int ficha = m.getMovimiento().getNumFicha()-1;
+                    int ficha = m.getMovimiento().getNumFicha();
                     int x = m.getMovimiento().getCasilla().getX();
                     int y = m.getMovimiento().getCasilla().getY();
                     
@@ -174,9 +174,11 @@ public class Cliente {
             String usernameLabel = m.getUsername();
             String message = "Se unió "+usernameLabel+" a la partida ";
             
-            if (usernameLabel.equalsIgnoreCase(this.username))
+            if (usernameLabel.equalsIgnoreCase(this.username)){
                 usernameLabel = "Tú";
-                
+            }
+            
+            
             pantalla.setColorJugador(m.getMensaje(), usernameLabel);
             
             pantalla.mostrarMensaje(message);

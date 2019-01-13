@@ -21,6 +21,7 @@ public class Jugador {
     String apellido;
     Ficha[] fichas = new Ficha[4];
     Colores color;
+    boolean finalizo = false;
     
     public Jugador(String username, String pass, String nombre, String apellido){
         this.username = username;
@@ -40,6 +41,26 @@ public class Jugador {
         this.username = username;
 //        this.sala = sala;
     }
+
+    public boolean isFinalizo() {
+        return finalizo;
+    }
+    
+    // devuelve true si todas las fichas estan en meta
+    public boolean comprobarFichasEnMeta(){
+        boolean flag = true;
+        for (int i = 0; i < 4; i++){
+            flag = flag && getFichaInMeta(i);
+        }
+        
+        return flag;
+    }
+
+    public void setFinalizo(boolean finalizo) {
+        this.finalizo = finalizo;
+    }
+    
+    
     
     public int getId() {
         return id;

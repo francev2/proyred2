@@ -26,7 +26,7 @@ public class Ficha {
         this.movimientos=0;
         this.color = color;
         this.inicio=this.color.inicio();
-        this.casilla = inicio;
+        this.casilla = this.inicio;
     }
 
     public Colores getColor() {

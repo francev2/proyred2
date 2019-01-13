@@ -124,7 +124,7 @@ public class Pantalla extends javax.swing.JFrame {
         Image image ;
         if (color.equalsIgnoreCase("verde")){
             
-            if (username.equalsIgnoreCase(username)){
+            if (username.equalsIgnoreCase("Tú")){
                 icon = new ImageIcon(getClass().getResource("/assets/fichaVerde.png"));
                 image = icon.getImage();
                 icon = new ImageIcon(image.getScaledInstance(30, 60, Image.SCALE_DEFAULT));
@@ -137,7 +137,7 @@ public class Pantalla extends javax.swing.JFrame {
             
         }else if (color.equalsIgnoreCase("amarillo")){
             
-            if (username.equalsIgnoreCase(username)){
+            if (username.equalsIgnoreCase("Tú")){
                 icon = new ImageIcon(getClass().getResource("/assets/fichaAmarilla.png"));
                 image = icon.getImage();
                 icon = new ImageIcon(image.getScaledInstance(30, 60, Image.SCALE_DEFAULT));
@@ -151,7 +151,7 @@ public class Pantalla extends javax.swing.JFrame {
             
         }else if (color.equalsIgnoreCase("rojo")){
             
-            if (username.equalsIgnoreCase(username)){
+            if (username.equalsIgnoreCase("Tú")){
                 icon = new ImageIcon(getClass().getResource("/assets/fichaRojo.png"));
                 image = icon.getImage();
                 icon = new ImageIcon(image.getScaledInstance(30, 60, Image.SCALE_DEFAULT));
@@ -165,7 +165,7 @@ public class Pantalla extends javax.swing.JFrame {
             
         }else if (color.equalsIgnoreCase("azul")){
             
-            if (username.equalsIgnoreCase(username)){
+            if (username.equalsIgnoreCase("Tú")){
                 icon = new ImageIcon(getClass().getResource("/assets/fichaAzul.png"));
                 image = icon.getImage();
                 icon = new ImageIcon(image.getScaledInstance(30, 60, Image.SCALE_DEFAULT));
@@ -417,7 +417,7 @@ public class Pantalla extends javax.swing.JFrame {
 
     private void pasarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasarTurnoActionPerformed
         // TODO add your handling code here:
-        cliente.pasarTurno(user.getText());
+        cliente.pasarTurno();
     }//GEN-LAST:event_pasarTurnoActionPerformed
 
     private void moverFichaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moverFichaActionPerformed

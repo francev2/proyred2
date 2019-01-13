@@ -17,11 +17,14 @@ public class Partida {
     private String nombre;
     private Tablero tablero;
     private ArrayList<Jugador> jugadores = new ArrayList<Jugador>();
+    private ArrayList<Jugador> finalizaron = new ArrayList<Jugador>();
     private String turno;
     private boolean inicioDePartida;
     private boolean partidaIniciada;
     private boolean partidaPausada;
     private Colores[] colores;
+    private boolean partidaTerminada = false;
+    
 //    Representa el valor de los dados para saber que jugador empieza
     private String[][] inicio = new String[4][2];
 
@@ -142,6 +145,7 @@ public class Partida {
 //    devuelve la casilla donde calló la ficha
     public Casilla moverFicha(String username, int numFicha, int dado){
         int casilla = getJugadorByUsername(username).moverFicha(numFicha-1, dado)-1;
+        System.out.println("casilla => " +casilla);
         this.tablero.setCasilla(casilla, getPosicionJugador(username), numFicha);
         
         return this.tablero.getCasilla(casilla);
@@ -177,5 +181,42 @@ public class Partida {
     
     public String getUsernameJugador(int posicion) {
         return jugadores.get(posicion).getUsername();
+    }
+
+    public ArrayList<Jugador> getFinalizaron() {
+        return finalizaron;
+    }
+
+    public void setFinalizaron(ArrayList<Jugador> finalizaron) {
+        this.finalizaron = finalizaron;
+    }
+    
+    
+    
+    public void addGanador(Jugador jugador) {
+        this.finalizaron.add(jugador);
+    }
+    
+    public boolean finalizo(String username) {
+        return this.getJugadorByUsername(username).comprobarFichasEnMeta();
+    }
+
+    public boolean isPartidaTerminada() {
+        return partidaTerminada;
+    }
+
+    public void setPartidaTerminada(boolean partidaTerminada) {
+        this.partidaTerminada = partidaTerminada;
+    }
+    
+    
+    public boolean partidaFinalizada() {
+        boolean flag = true;
+        for (int i = 0; i< jugadores.size(); i++){
+            flag = flag && this.jugadores.get(i).comprobarFichasEnMeta();
+        }
+        
+        this.partidaTerminada = flag;
+        return flag;
     }
 }
