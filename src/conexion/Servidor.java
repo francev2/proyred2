@@ -424,12 +424,12 @@ public class Servidor {
 //                                  Mover la ficha contraria a home
                                     int[] userDesalojado = getPartidaByUsername(sol.getUsername()).resetCasillaOcupada(casilla-1);
 //                                  Encontrar la casilla de home que pertenece a esa pieza
-                                    Casilla casillaHome = getPartidaByUsername(sol.getUsername()).getTablero().getCasillaFicha(((userDesalojado[0]-1)*4)+userDesalojado[1]-1);
-                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, userDesalojado[0]+"",new Movimiento(false, casillaHome, ((userDesalojado[0]-1)*4)+(userDesalojado[1]-1))));
+                                    Casilla casillaHome = getPartidaByUsername(sol.getUsername()).getTablero().getCasillaFicha( ((userDesalojado[0]-1)*4)+(userDesalojado[1]-1) );
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, userDesalojado[0]+"",new Movimiento(false, casillaHome, ((userDesalojado[0]-1)*4)+(userDesalojado[1]-1) )));
 
 //                                  Mover la ficha a esa casilla
                                     Casilla callo = getPartidaByUsername(sol.getUsername()).moverFicha(username, numFicha, dado);
-                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+(numFicha-1))));
+                                    enviarMensajePartida(pa, new Paquete(username, Tipo.MOVIMIENTO, false, pa.getPosicionJugador(username)+"",new Movimiento(false, callo, ((pa.getPosicionJugador(username)-1)*4)+(numFicha-1) )));
                                 
                                     if (dado == 6){
                                         enviarMensaje(c, new Paquete(username, Tipo.TURNO, true, "Vuelve a lanzar"));
