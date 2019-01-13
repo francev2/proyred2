@@ -146,6 +146,14 @@ public class Partida {
     public Casilla moverFicha(String username, int numFicha, int dado){
         int casilla = getJugadorByUsername(username).moverFicha(numFicha-1, dado)-1;
         System.out.println("casilla => " +casilla);
+        
+        int casillaActual = getJugadorByUsername(username).getFicha(numFicha-1).getCasilla() -1;
+        try{
+            this.tablero.setCasilla(casillaActual, getPosicionJugador(username), numFicha, false);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
         this.tablero.setCasilla(casilla, getPosicionJugador(username), numFicha);
         
         return this.tablero.getCasilla(casilla);

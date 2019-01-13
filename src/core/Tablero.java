@@ -66,6 +66,17 @@ public class Tablero {
         return true;   
     }
     
+    
+//    idJugador es la posicion en el arraylist de jugadores de la partida
+    public boolean setCasilla(int numCasilla, int idJugador, int numFicha, boolean ocupadaFlag){
+        int ocupada = ((idJugador-1)*4)+numFicha-1;
+        this.casillas[numCasilla].setOcupada(ocupadaFlag);
+        this.ocupadas[ocupada][0] = -1;
+        this.ocupadas[ocupada][1] = -1;
+        this.ocupadas[ocupada][2] = -1;
+        return true;   
+    }
+    
 //    Devuelve un arra 
 //    1: idJugador(Posicion en el array de jugadores de partida)
 //    2: el numero de la ficha que estaba en la casilla
