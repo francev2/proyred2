@@ -104,6 +104,10 @@ public class Jugador {
         }
     }
     
+    public void returnToHome(int numFicha){
+        this.fichas[numFicha].moveToHome();
+    }
+    
     public int lanzarDado(){
         return (int) (Math.random() * 6) + 1;
     }

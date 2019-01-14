@@ -136,4 +136,11 @@ public class Ficha {
         this.movimientos = this.movimientos - 1;
         this.casilla = pasillo[this.movimientos];
     }
+
+    public void moveToHome() {
+        this.movimientos = 0;
+        this.casilla = 0;
+        this.casilla = this.inicio;
+        this.home = true;
+    }
 }

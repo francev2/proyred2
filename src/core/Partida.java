@@ -144,10 +144,11 @@ public class Partida {
     
 //    devuelve la casilla donde calló la ficha
     public Casilla moverFicha(String username, int numFicha, int dado){
+        int casillaActual = getJugadorByUsername(username).getFicha(numFicha-1).getCasilla() -1;
+        
         int casilla = getJugadorByUsername(username).moverFicha(numFicha-1, dado)-1;
         System.out.println("casilla => " +casilla);
         
-        int casillaActual = getJugadorByUsername(username).getFicha(numFicha-1).getCasilla() -1;
         try{
             this.tablero.setCasilla(casillaActual, getPosicionJugador(username), numFicha, false);
         }catch(Exception e){
@@ -165,7 +166,9 @@ public class Partida {
 
 //    Devuelve el username del usuario que fue desalojado y la ficha 
     public int[] resetCasillaOcupada(int numCasilla){
-        return this.tablero.resetCasillaOcupada(numCasilla);
+        int[] id = this.tablero.resetCasillaOcupada(numCasilla);
+        this.jugadores.get(id[0]-1).returnToHome(id[1]-1);
+        return id;
 //        String[] r = new String[2]; 
 //        try{
 //            r[0] = getUsernameJugador(posJugador[0]);
