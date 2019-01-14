@@ -216,7 +216,6 @@ public class Pantalla extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1100, 700));
 
-        panelTablero.setBackground(new java.awt.Color(255, 0, 102));
         panelTablero.setRequestFocusEnabled(false);
         panelTablero.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

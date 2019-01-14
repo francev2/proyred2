@@ -415,7 +415,7 @@ public class Servidor {
                             }else if (pa.getTablero().isCasillaOcupada(casilla-1)){
                                 
 //                              Comprobar si esta ocupada por una casilla propia
-                                if(pa.getTablero().casillaPropia(pa.getPosicionJugador(username), casilla)){
+                                if(pa.getTablero().casillaPropia(pa.getPosicionJugador(username), casilla-1)){
 //                                  Pedirle que seleccione otra ficha
                                     enviarMensaje(c, new Paquete(username, Tipo.MOVIMIENTO, true, dado+"", new Movimiento(true, "Seleciona otra ficha")));
                                 

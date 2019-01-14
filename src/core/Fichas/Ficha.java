@@ -66,10 +66,11 @@ public class Ficha {
                 this.movimientos-=52;
                 this.meta = true;
                 this.moverAMeta();
-            }
-            this.casilla += dado;
-            if (this.casilla >= 52){
-                this.casilla-=52;
+            }else{
+                this.casilla += dado;
+                if (this.casilla >= 52){
+                    this.casilla-=52;
+                }
             }
         }
         System.out.println("Movimientos: " + this.movimientos + "posicion: " + this.casilla);
@@ -96,9 +97,14 @@ public class Ficha {
         }else{
             
             if (movimiento <= 52 ){
-                return this.casilla + dado;
+                if (this.casilla + dado >= 52){
+                    return this.casilla + dado - 52;
+                }else{
+                    return this.casilla + dado;
+                }
+                
             } else {
-                movimiento -= 52;
+                movimiento -= 52 +1;
                 int pasillo[] = color.pasillo();
                 if (movimiento == 5){
                     return 100;
