@@ -122,7 +122,7 @@ public class Servidor {
     
     
     public String iniciarPartida(Partida p){
-        if ( p.getJugadores().size() < 1 )
+        if ( p.getJugadores().size() < 3  )
             return "La partida no tiene jugadores suficientes";
         else{
             String user = p.getJugadores().get(0).getUsername();
@@ -232,11 +232,11 @@ public class Servidor {
     }
     
     private boolean setDadoInicio(Partida partida, String username, String dado, ConexionUsuario c){
-        for (int i = 0; i < 2 ; i++){
+        for (int i = 0; i < 4 ; i++){
             if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(username)){
                 partida.getInicio()[i][0] = username;
                 partida.getInicio()[i][1] = dado;
-                if (i == 1 ){
+                if (i == 3 ){
                     return true;
                 } else {
                     String siguienteTurno = siguienteJugador(partida, username);
@@ -252,10 +252,10 @@ public class Servidor {
     }
     
     private String siguienteJugador(Partida partida, String currentUsername){
-        for (int i = 0; i < 2 ; i++){
+        for (int i = 0; i < 4 ; i++){
             if (!partida.getJugadores().get(i).isFinalizo())
                 if (partida.getJugadores().get(i).getUsername().equalsIgnoreCase(currentUsername)){
-                    if (i == 1)
+                    if (i == 3)
                     {
                         partida.setTurno(partida.getJugadores().get(0).getUsername());
                         return partida.getJugadores().get(0).getUsername();
@@ -272,7 +272,7 @@ public class Servidor {
     private String primero(Partida partida){
         int num = 0;
         String username = "";
-        for (int i = 0; i< 2 ; i++){
+        for (int i = 0; i< 4 ; i++){
             int valor = Integer.parseInt(partida.getInicio()[i][1]);
             if ( valor > num){
                 num = valor;
@@ -314,8 +314,12 @@ public class Servidor {
                     
                     for (int i = 0; i < pa.getJugadores().size(); i++){
                         for (int j = 0; j < 4; j++){
-                            Casilla casilla = pa.getTablero().getCasilla(pa.getJugadores().get(i).getFicha(j).getCasilla()-1);
-                            enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, false, "Estdo del tablero", new Movimiento(false, casilla, ((i-1)*4)+(j-1) ) ));
+                            try {
+                                Casilla casilla = pa.getTablero().getCasilla(pa.getJugadores().get(i).getFicha(j).getCasilla()-1);
+                                enviarMensaje(c, new Paquete(sol.getUsername(), Tipo.MOVIMIENTO, false, "Estdo del tablero", new Movimiento(false, casilla, ((i-1)*4)+(j-1) ) ));
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
                         }
                     }
                     
@@ -346,7 +350,7 @@ public class Servidor {
             }
             
             if (getPartidaByUsername(sol.getUsername()).isInicioDePartida()){
-                if (getPartidaByUsername(sol.getUsername()).getInicio()[1][1] == null){
+                if (getPartidaByUsername(sol.getUsername()).getInicio()[3][1] == null){
                     boolean fin = setDadoInicio(getPartidaByUsername(sol.getUsername()), sol.getUsername(), sol.getMensaje(), c);
                     if (fin) {
                         getPartidaByUsername(sol.getUsername()).setInicioDePartida(false);

@@ -94,6 +94,7 @@ public class Cliente {
     
 
     public String procesarRespuesta(Paquete m) {
+        try{
         Tipo  tipo= m.getTipo();
         if (tipo == Tipo.LOGIN){
             if(m.isError()){
@@ -190,6 +191,14 @@ public class Cliente {
             return m.getMensaje();
         }else{
             return m.getMensaje();
+        }
+        
+        
+        }catch(Exception e){
+            e.printStackTrace();
+            String mess = "Ocurrió un error ene el servidor";
+            pantalla.mostrarMensaje(mess);
+            return mess;
         }
                        
     }

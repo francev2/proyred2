@@ -116,7 +116,11 @@ public class Pantalla extends javax.swing.JFrame {
     }
     
     public void moverFicha(int numFicha, int x, int y){
-        this.fichas[numFicha].setBounds(x, y, 60, 30);
+        try{
+            this.fichas[numFicha].setBounds(x, y, 60, 30);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     public void setColorJugador(String color, String username){
@@ -152,7 +156,7 @@ public class Pantalla extends javax.swing.JFrame {
         }else if (color.equalsIgnoreCase("rojo")){
             
             if (username.equalsIgnoreCase("Tú")){
-                icon = new ImageIcon(getClass().getResource("/assets/fichaRojo.png"));
+                icon = new ImageIcon(getClass().getResource("/assets/fichaRoja.png"));
                 image = icon.getImage();
                 icon = new ImageIcon(image.getScaledInstance(30, 60, Image.SCALE_DEFAULT));
                 ficha1.setIcon(icon);

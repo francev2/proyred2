@@ -54,7 +54,7 @@ public class Partida {
     }
 
     public Partida(String nombre){
-        this.colores = new Colores[]{Colores.amarillo, Colores.verde, Colores.azul, Colores.rojo,  };
+        this.colores = new Colores[]{Colores.amarillo, Colores.verde,Colores.rojo, Colores.azul  };
         this.nombre = nombre;
         this.tablero = new Tablero();
     }
@@ -104,7 +104,7 @@ public class Partida {
     
     public boolean addJuagador (String username, String pass, String nombre, String apellido ){
         System.out.println("jugador num: => " + jugadores.size());
-        if (jugadores.size() < 4){
+        if (jugadores.size() <= 4){
             //Jugador jugador = new Jugador( username, pass, nombre, apellido);
             Ficha ficha;
             Jugador jugador = new Jugador( username, pass, nombre, apellido, colores[jugadores.size()]);
